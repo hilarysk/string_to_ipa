@@ -22,8 +22,10 @@ Or install it yourself as:
 
 To convert a string to the International Phonetic Alphabet:
 
-```"yay".to_ipa
-=> "jˈeɪ" ```
+```ruby
+"yay".to_ipa
+=> "jˈeɪ" 
+```
 
 ## Contributing
 
