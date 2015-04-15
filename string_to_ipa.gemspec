@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["hilarysk@gmail.com"]
   
   spec.summary       = %q{A minimalist gem that converts a string to the International Phonetic Alphabet.}
-  spec.description   = %q{This gem relies on a modified version of the open-source Carnegie Mellon University Pronouncing Dictionary (converting words to IPA instead of Arpabet).}
+  spec.description   = %q{This gem relies on a modified version of the open-source Carnegie Mellon University Pronouncing Dictionary (converting words to the International Phonetic Alphabet (IPA) instead of Arpabet).}
   spec.homepage      = "https://github.com/hilarysk/string_to_ipa"
   spec.license       = "MIT"
 
