@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Hilary Stohs-Krause"]
   spec.email         = ["hilarysk@gmail.com"]
   
-  spec.summary       = %q{Write a short summary, because Rubygems requires one.} #fill these out
-  spec.description   = %q{ Write a longer description or delete this line.}
+  spec.summary       = %q{A minimalist gem that converts a string to the International Phonetic Alphabet.}
+  spec.description   = %q{This gem relies on a modified version of the open-source Carnegie Mellon University Pronouncing Dictionary (converting words to IPA instead of Arpabet).}
   spec.homepage      = "http://example.com"
   spec.license       = "MIT"
 
