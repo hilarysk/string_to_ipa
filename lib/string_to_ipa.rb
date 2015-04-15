@@ -59,6 +59,14 @@ end
 
 class String
   def to_ipa
-    StringToIpa::DATABASE.execute("SELECT phonetic from phonetics where word = ?", self.upcase)[0]["phonetic"]
+    phonetic = StringToIpa::DATABASE.execute("SELECT phonetic from phonetics where word = ?", self.upcase)
+    
+    if phonetic == []
+      return self
+    else
+      return phonetic[0]["phonetic"]
+    end
+  
   end
+
 end
