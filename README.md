@@ -26,6 +26,7 @@ To convert a string to the International Phonetic Alphabet:
 "yay".to_ipa
 => "jˈeɪ" 
 ```
+If the string isn't in the database, calling `.to_ipa` simply returns the original string.
 
 ## Contributing
 
