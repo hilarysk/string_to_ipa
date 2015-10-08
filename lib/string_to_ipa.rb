@@ -2,7 +2,7 @@ require "string_to_ipa/version"
 require "sqlite3"
 
 module StringToIpa
-  DATABASE = SQLite3::Database.new("ipagem.db")
+  DATABASE = SQLite3::Database.new(File.join(File.expand_path(File.dirname(__FILE__)), "..", "ipagem.db"))
 
   DATABASE.results_as_hash = true
   DATABASE.execute( "PRAGMA encoding = \"UTF-16\"" );
