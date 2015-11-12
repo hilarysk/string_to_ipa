@@ -20,6 +20,8 @@ Or install it yourself as:
 
 ## Usage
 
+**#to_ipa**
+
 To convert a string to the International Phonetic Alphabet:
 
 ```ruby
@@ -27,6 +29,17 @@ To convert a string to the International Phonetic Alphabet:
 => "jˈeɪ" 
 ```
 If the string isn't in the database, calling `.to_ipa` simply returns the original string.
+
+**#to_word**
+
+To convert the phonetic version of a word to the American English spelling:
+
+```ruby
+"jˈeɪ".to_word
+=> "yay"
+```
+
+Likewise, if the phonetic spelling isn't in the database, calling `.to_word` will return the phonetic spelling.
 
 ## Contributing
 
