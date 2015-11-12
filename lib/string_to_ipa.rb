@@ -2,10 +2,14 @@ require "string_to_ipa/version"
 require "sqlite3"
 
 module StringToIpa
-  DATABASE = SQLite3::Database.new(File.join(File.expand_path(File.dirname(__FILE__)), "..", "ipagem.db"))
-
-  DATABASE.results_as_hash = true
-  DATABASE.execute( "PRAGMA encoding = \"UTF-16\"" );
+  class << self
+    def database
+      @database ||= SQLite3::Database.new(File.expand_path('../ipagem.db', File.dirname(__FILE__)))
+      @database.results_as_hash = true
+      @database.execute( "PRAGMA encoding = \"UTF-16\"" );
+      @database
+    end
+  end
   
   class Phonetic
     attr_accessor :word, :phonetic
@@ -18,8 +22,8 @@ module StringToIpa
     end
   
     def insert
-      DATABASE.execute("INSERT INTO phonetics (word, phonetic) VALUES (?, ?)", @word, @phonetic)
-      @id = DATABASE.last_insert_row_id
+      self.class.database.execute("INSERT INTO phonetics (word, phonetic) VALUES (?, ?)", @word, @phonetic)
+      @id = self.class.database.last_insert_row_id
     end
   
     def save      
@@ -38,17 +42,17 @@ module StringToIpa
       end                                                                
 
       query_hash.each do |key, value|
-        DATABASE.execute("UPDATE phonetics SET #{key} = ? WHERE id = #{@id}", value)
+        self.class.database.execute("UPDATE phonetics SET #{key} = ? WHERE id = #{@id}", value)
       end                                                                          
     end
   
     def delete
-      DATABASE.execute("DELETE FROM phonetics WHERE id = #{@id}")
+      self.class.database.execute("DELETE FROM phonetics WHERE id = #{@id}")
     end
   
   
     def self.find(s_id)
-      result = DATABASE.execute("SELECT * FROM phonetics WHERE id = #{s_id}")[0]
+      result = self.class.database.execute("SELECT * FROM phonetics WHERE id = #{s_id}")[0]
     
       self.new(result)
     end
@@ -59,7 +63,7 @@ end
 
 class String
   def to_ipa
-    phonetic = StringToIpa::DATABASE.execute("SELECT phonetic from phonetics where word = ?", self.upcase)
+    phonetic = StringToIpa.database.execute("SELECT phonetic from phonetics where word = ?", self.upcase)
     
     if phonetic == []
       return self
