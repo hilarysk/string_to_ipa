@@ -66,7 +66,16 @@ class String
     else
       return phonetic[0]["phonetic"]
     end
-  
+  end
+
+  def to_word
+    word = StringToIpa::DATABASE.execute("SELECT word from phonetics where phonetic = ?", self)
+
+    if word == []
+      return self
+    else
+      return word[0]["word"]
+    end
   end
 
 end
