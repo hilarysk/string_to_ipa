@@ -1,81 +1,93 @@
 require "string_to_ipa/version"
 require "sqlite3"
+require "pry"
 
 module StringToIpa
-  DATABASE = SQLite3::Database.new(File.join(File.expand_path(File.dirname(__FILE__)), "..", "ipagem.db"))
-
-  DATABASE.results_as_hash = true
-  DATABASE.execute( "PRAGMA encoding = \"UTF-16\"" );
-  
   class Phonetic
     attr_accessor :word, :phonetic
     attr_reader :id
-  
+
     def initialize(options)
-      @word = options["word"]
-      @phonetic = options["phonetic"]
-      @id = options["id"]
+      @word = options[:word]
+      @phonetic = options[:phonetic]
+      @id = options[:id]
     end
-  
+
+    def to_ipa
+      phonetic = database.execute("SELECT phonetic from phonetics where word = ?", @word.upcase)
+
+      if phonetic == []
+        return @word
+      else
+        return phonetic[0]["phonetic"]
+      end
+    end
+
+    def to_word
+      word = database.execute("SELECT word from phonetics where phonetic = ?", @phonetic)
+
+      if word == []
+        return @phonetic
+      else
+        return word[0]["word"].downcase
+      end
+    end
+
     def insert
-      DATABASE.execute("INSERT INTO phonetics (word, phonetic) VALUES (?, ?)", @word, @phonetic)
-      @id = DATABASE.last_insert_row_id
+      database.execute("INSERT INTO phonetics (word, phonetic) VALUES (?, ?)", @word, @phonetic)
+      @id = database.last_insert_row_id
     end
-  
-    def save      
+
+    def save
       attributes = []
-                                                                                 
-      instance_variables.each do |i|                                               
-        attributes << i.to_s.delete("@")                                           
-      end     
-                                                                         
-                                                                                 
-      query_hash = {}                                                 
-                                                                                 
-      attributes.each do |a|                                             
+
+      instance_variables.each do |i|
+        attributes << i.to_s.delete("@")
+      end
+
+      query_hash = {}
+
+      attributes.each do |a|
         value = self.send(a)
-        query_hash[a] = value                                                       
-      end                                                                
+        query_hash[a] = value
+      end
 
       query_hash.each do |key, value|
-        DATABASE.execute("UPDATE phonetics SET #{key} = ? WHERE id = #{@id}", value)
-      end                                                                          
+        database.execute("UPDATE phonetics SET #{key} = ? WHERE id = #{@id}", value)
+      end
     end
-  
+
     def delete
-      DATABASE.execute("DELETE FROM phonetics WHERE id = #{@id}")
+      database.execute("DELETE FROM phonetics WHERE id = #{@id}")
     end
-  
-  
+
     def self.find(s_id)
-      result = DATABASE.execute("SELECT * FROM phonetics WHERE id = #{s_id}")[0]
-    
+      result = database.execute("SELECT * FROM phonetics WHERE id = #{s_id}")[0]
       self.new(result)
     end
-  
-  end
 
+    private
+
+    def database
+      @database ||= begin
+        db = SQLite3::Database.new(File.join(File.expand_path(File.dirname(__FILE__)), "..", "ipagem.db"))
+        db.results_as_hash = true
+        db.execute( "PRAGMA encoding = \"UTF-16\"" )
+        db
+      end
+    end
+
+  end
 end
+
 
 class String
   def to_ipa
-    phonetic = StringToIpa::DATABASE.execute("SELECT phonetic from phonetics where word = ?", self.upcase)
-    
-    if phonetic == []
-      return self
-    else
-      return phonetic[0]["phonetic"]
-    end
+    StringToIpa::Phonetic.new(word: self).to_ipa
   end
+
 
   def to_word
-    word = StringToIpa::DATABASE.execute("SELECT word from phonetics where phonetic = ?", self)
-
-    if word == []
-      return self
-    else
-      return word[0]["word"]
-    end
+    StringToIpa::Phonetic.new(phonetic: self).to_word
   end
-
 end
