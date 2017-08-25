@@ -1,6 +1,5 @@
 require "string_to_ipa/version"
 require "sqlite3"
-require "pry"
 
 module StringToIpa
   class Phonetic
