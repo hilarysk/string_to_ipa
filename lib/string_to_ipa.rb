@@ -68,7 +68,7 @@ module StringToIpa
     private
 
     def database
-      @database ||= begin
+      @@database ||= begin
         db = SQLite3::Database.new(File.join(File.expand_path(File.dirname(__FILE__)), "..", "ipagem.db"))
         db.results_as_hash = true
         db.execute( "PRAGMA encoding = \"UTF-16\"" )
